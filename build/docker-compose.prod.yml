@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  nginx:
+    volumes: 
+    - ${APP_MOUNT}:/var/www/html
+    # - ${LETSENCRYPT_MOUNT}:/etc/pki/tls/letsencrypt
+    ports:
+    - 80:80
+    - 443:443
+
+  php-fpm:
+    volumes: 
+    - ${APP_MOUNT}:/var/www/html
+
+  queue-worker:
+    volumes: 
+    - ${APP_MOUNT}:/var/www/html
+
+  mysql:
+    environment: 
+      - MYSQL_ROOT_PASSWORD={$MYSQL_ROOT_PASSWORD}
+    ports:
+      - 3306:3306
+
+  node:
+    volumes: 
+    - ${APP_MOUNT}:/var/www/html
+

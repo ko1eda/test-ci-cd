@@ -1,0 +1,78 @@
+version : '3'
+
+services : 
+  nginx:
+    build: 
+      context: ./nginx
+      dockerfile: DockerFile
+    image: koledachris/nginx:1.0.0
+    networks: 
+      - appnet
+    depends_on:
+      - php-fpm
+    restart: always
+
+  php-fpm:
+    build:
+      context: ./php
+      dockerfile: DockerFile
+    image: koledachris/php-fpm:1.0.0
+    networks: 
+      - appnet
+    restart: always
+  
+  queue-worker:
+    build:
+      context: ./queue-worker
+      dockerfile: DockerFile
+    image: koledachris/queue-worker:1.0.0
+    networks: 
+      - appnet
+    depends_on:
+      - php-fpm
+    restart: always
+  
+  mysql:
+    build:
+      context: ./mysql
+      dockerfile: DockerFile
+    image: koledachris/mysql:1.0.0
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks: 
+      - appnet
+    restart: always
+
+  redis:
+    image: redis:5.0.0-alpine
+    networks: 
+      - appnet  
+    volumes:
+      - redis_data:/data
+    restart: always
+
+  node:
+    build:
+      context: ./node
+      dockerfile: DockerFile
+    image: koledachris/node:1.0.0
+    networks:
+      - appnet
+
+
+# External means use an external volume
+# If not it would create a volume scoped with the root dir name
+volumes:
+  mysql_data:
+  redis_data:
+
+# Same as volume comments above
+networks: 
+  appnet:
+
+
+# this creates a temporary container, installs the vendor directory and all dependencies into our laravel project and then removes itself
+# docker run --rm -it -v $(pwd):/opt -w /opt koledachris/php-fpm:0.3.0 composer install
+# docker run --rm -it -v $(pwd):/opt -w /opt koledachris/php-fpm:0.3.0 bash -c "apt-get update && apt-get install -y nodejs npm && npm install && npm run production"
+# docker run --rm -it -v $(pwd):/opt -w /opt koledachris/php-fpm:0.3.0 php artisan migrate
+# note you need to also do an npm install which means you would either need a temp container with node and npm on it or to install it temporarily in one of the containers
