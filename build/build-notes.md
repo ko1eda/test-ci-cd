@@ -1,5 +1,14 @@
 # Build Notes
 
+
+## Steps to setup the Server 
+1. Build all images before running docker-compose up
+2. Create a tempoarary php container to install a new laravel app using: (note: $(pwd) -- this represents the root directory of the project itself not the application)
+```
+run --rm -it -v $(pwd):/opt koledachris/php-fpm:1.0.0 bash -c "cd /opt && composer create project --prefer-dist laravel/laravel test-app" 
+```
+
+
 ## Environment Variables and secrets management 
 + Passing environment variables to SQL scripts https://stackoverflow.com/questions/76065/how-do-i-pass-a-variable-to-a-mysql-script
 + Secrets management with vault (high level overview) https://www.youtube.com/watch?v=VYfl-DpZ5wM
