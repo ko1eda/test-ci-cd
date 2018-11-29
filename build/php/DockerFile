@@ -33,13 +33,11 @@ RUN apt-get update && \
 ADD ./php-fpm.conf /etc/php/7.2/fpm/php-fpm.conf
 ADD ./www.conf /etc/php/7.2/fpm/pool.d/www.conf
 # Add laravel queue worker to systemd 
-ADD laravel-queue.service /etc/systemd/system/
+# ADD laravel-queue.service /etc/systemd/system/
 
 # Change permissions on laravel queue worker service https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/sect-managing_services_with_systemd-unit_files
-RUN chmod 664 /etc/systemd/system/laravel-queue.service && \
-  chown root:root /etc/systemd/system/laravel-queue.service
-
-WORKDIR /var/www/html
+# RUN chmod 664 /etc/systemd/system/laravel-queue.service && \
+#   chown root:root /etc/systemd/system/laravel-queue.service
 
 WORKDIR /var/www/html
 
