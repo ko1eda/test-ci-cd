@@ -7,7 +7,18 @@
 ```
 run --rm -it -v $(pwd):/opt koledachris/php-fpm:1.0.0 bash -c "cd /opt && composer create project --prefer-dist laravel/laravel test-app" 
 ```
-
+3. Move .env file from php folder into test-app directory
+```
+sudo cp srv/domain_name/build/.env  /srv/domain_name/test-app/.env
+```
+4. Generate a new application key (run your php container and use it run)
+```
+docker run --rm -it -v $(pwd):/opt -w /opt koledachris/php-fpm:1.0.0 php artisan key:generate
+```
+5. Run any migrations if you have them
+```
+docker run --rm -it -v $(pwd):/opt -w /opt koledachris/php-fpm:1.0.0 php artisan migrate
+```
 
 ## Environment Variables and secrets management 
 + Passing environment variables to SQL scripts https://stackoverflow.com/questions/76065/how-do-i-pass-a-variable-to-a-mysql-script
