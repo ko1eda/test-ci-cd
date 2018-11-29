@@ -1,6 +1,6 @@
 FROM nginx:1.14.1-alpine
 
-LABEL author="Christopher Koleda" version="2.0.0"
+LABEL author="Christopher Koleda" version="1.0.0"
 
 # RUN apk update && \
 #     mkdir -p /var/www/data && \

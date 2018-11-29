@@ -1,6 +1,6 @@
 FROM php:7.2-alpine
 
-LABEL author="Christopher Koleda" version="0.1.0"
+LABEL author="Christopher Koleda" version="1.0.0"
 
 RUN apk update && apk --no-cache add shadow && \ 
   docker-php-ext-install pdo pdo_mysql pcntl posix && \
