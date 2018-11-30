@@ -24,21 +24,31 @@ fi
 usermod -aG www-data ec2-user && \
 groupmod -g 1001 www-data 
 
+# Set permissions on the serve directory 
+chown -R ec2-user:www-data /srv && \
+chmod -R +2770 /srv
+
 # If a deployer user doesn't exist create one 
 if [ -z $( grep deployer /etc/passwd) ]
   then
-    useradd deployer
+    useradd deployer && \ 
+    usermod -aG www-data deployer
 fi
 
-# Add deployer to www-data group
-usermod -aG www-data deployer 
+# Next switch to deployer user
+# note that you can only switch to this user account if you are already operating as root. This is because the deployer account was not created with a pw  
+su deployer 
 
-# If no key file exists for the deployer user then create one
-# note that you can only switch to this user account if you are already operating as root. This is because the deployer account was not created with a pw
+# Pull ssh key from S3,
+
+# If no key file exists for the deployer user then create one and push to s3
 if [ ! -e /home/deployer/.ssh/id_rsa ]
   then 
-    su deployer 
-    ssh-keygen -o -t rsa -b 4096 -f /home/deployer/.ssh/id_rsa -q -N ""
+    ssh-keygen -o -t rsa -b 4096 -f /home/deployer/.ssh/id_rsa -q -N "" # possibly pull ssh key down from s3 or something this way each new server doesn't have to generate it
 fi
+
+# After the key is downloaded switch to /srv/ directory and clone the project
+cd /srv && \
+yes | git clone git@gitlab.com:koleda/test-ci-cd.git && \
 
 # reboot
