@@ -1,7 +1,12 @@
 # Build Notes
 
+## Steps to setup CI/CD Pipeline
+1. Gitlab. Follow this tutorial https://docs.gitlab.com/ee/ci/examples/laravel_with_gitlab_and_envoy/
+2. Gitlab CI settings for laravel https://laracasts.com/discuss/channels/testing/laravel-ci-testing-with-gitlab
+
 
 ## Steps to setup the Server 
+### To Build Project
 1. Build all images before running docker-compose up
 2. Create a tempoarary php container to install a new laravel app using: (note: $(pwd) -- this represents the root directory of the project itself not the application)
 ```
@@ -19,6 +24,14 @@ docker run --rm -it -v $(pwd):/opt -w /opt koledachris/php-fpm:1.0.0 php artisan
 ```
 docker run --rm -it -v $(pwd):/opt -w /opt koledachris/php-fpm:1.0.0 php artisan migrate
 ```
+### To setup production server
+1. Run startup.sh
+  + How to check if a group exists in bash script 
+    + https://stackoverflow.com/questions/29073210/how-to-check-if-a-group-exists-and-add-if-it-doesnt-in-linux-shell-script
+    + https://unix.stackexchange.com/questions/191934/how-to-check-the-string-is-null-or-not-in-shell-script
+  + Execute commands as different user in script https://unix.stackexchange.com/questions/264237/how-can-i-execute-a-script-as-root-execute-some-commands-in-it-as-a-specific-us
+  +  Check for file non-existence https://stackoverflow.com/questions/638975/how-do-i-tell-if-a-regular-file-does-not-exist-in-bash
+2. 
 
 ## Environment Variables and secrets management 
 + Passing environment variables to SQL scripts https://stackoverflow.com/questions/76065/how-do-i-pass-a-variable-to-a-mysql-script
