@@ -1,6 +1,6 @@
 FROM ubuntu:18.04
 
-LABEL author="Christopher Koleda" version="0.1.0"
+LABEL author="Christopher Koleda" version="4.0.0"
 
 RUN apt-get update && \
   apt-get install -y --no-install-recommends locales locales-all
@@ -22,7 +22,6 @@ RUN apt-get update && \
   php -r "unlink('composer-setup.php');" && \
   mv composer.phar /usr/local/bin/composer && \
   composer global require laravel/envoy && \
-  export PATH=/root/.composer/vendor/bin:$PATH && \
   mkdir /run/php && \
   apt-get remove -y --purge software-properties-common && \
   apt-get clean && \
@@ -30,10 +29,12 @@ RUN apt-get update && \
   usermod -u 1001 www-data && \
   groupmod -g 1001 www-data
 
-COPY config /root/.ssh/config-test
+COPY config /root/.ssh/config
 COPY my-instance-key-pair.pem /root/.ssh/key.pem
 
 RUN chmod -R 600 /root/.ssh/
+
+ENV PATH="/root/.composer/vendor/bin:${PATH}" 
 
 # RUN cp /root/.ssh/config-test /root/.ssh/config && \
 #   cp /root/.ssh/my-instance-key-pair.pem /root/.ssh/key.pem
