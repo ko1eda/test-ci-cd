@@ -13,7 +13,8 @@
 @story('deploy')
     clone_repository
     build_images
-    install_dependencies
+    install_composer_dependencies
+    install_npm_dependencies
     move_env
     update_symlinks
     build_containers
@@ -33,12 +34,23 @@
     docker-compose -f docker-compose.base.yml -f docker-compose.prod.yml build
 @endtask
 
-@task('install_dependencies')
+@task('install_composer_dependencies')
     echo "Starting deployment ({{ $release }})" 
     cd {{ $new_release_dir }}
     export APP_MOUNT={{ $release_mount }}
-    echo "Running composer install" 
+
+    echo "Running composer install"
     docker-compose -f build/docker-compose.base.yml -f build/docker-compose.prod.yml run --rm --user 1002 php-fpm bash -c "composer install --prefer-dist --no-scripts -q -o"
+@endtask
+
+@task('install_npm_dependencies')
+    echo "Running npm install"
+    cd {{ $new_release_dir }}
+    export APP_MOUNT={{ $release_mount }}
+    docker-compose -f build/docker-compose.base.yml -f build/docker-compose.prod.yml run --rm -w /var/www/html node bash -c "npm install && npm run production"
+    {{-- 
+    echo "Building production asset files" 
+    docker-compose -f build/docker-compose.base.yml -f build/docker-compose.prod.yml run --rm --user 1002 node bash -c "npm run production --}}
 @endtask
 
 @task('move_env')
@@ -48,7 +60,7 @@
 
 @task('update_symlinks')
     echo "Linking {{ $new_release_dir }} -> {{ $app_dir }}" 
-    {{-- rm -rf {{ $new_release_dir }}/storage
+    {{-- rm -rf {{ $new_release_dir }}/storage  
     ln -nfs {{ $app_dir }}/storage {{ $new_release_dir }}/storage
 
     echo 'Linking .env file'

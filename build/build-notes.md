@@ -21,6 +21,8 @@ newuser ALL=(ALL)NOPASSWD:ALL (enter this on the last line of the file, save and
 ```
 docker-compose -f build/docker-compose.base.yml -f build/docker-compose.prod.yml run --rm --user 1002 php-fpm bash -c "composer install --prefer-dist --no-scripts -q -o"
 ```
+8. Possible steps to improve envoy script https://bosnadev.com/2015/01/07/brief-introduction-laravel-envoy/
+  + note that you can use functions in bash scripts https://ryanstutorials.net/bash-scripting-tutorial/bash-functions.php
 
 
 ## Steps to setup the Server 
