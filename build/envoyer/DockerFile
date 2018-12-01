@@ -33,7 +33,9 @@ RUN apt-get update && \
 COPY config /root/.ssh/config-test
 COPY my-instance-key-pair.pem /root/.ssh/key.pem
 
+RUN chmod -R 600 /root/.ssh/
+
 # RUN cp /root/.ssh/config-test /root/.ssh/config && \
 #   cp /root/.ssh/my-instance-key-pair.pem /root/.ssh/key.pem
 
-WORKDIR /var/www/html
+WORKDIR /var/www/html 
