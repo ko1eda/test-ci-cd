@@ -3,7 +3,7 @@
 @setup
     $repository = 'git@gitlab.com:koleda/test-ci-cd.git';
     $releases_dir = '/srv/releases';
-    $app_dir = '/srv/test-ci';
+    $app_dir = '/srv/app';
     $release = date('YmdHis');
     $new_release_dir = $releases_dir .'/'. $release;
     $app_mount = $releases_dir . '/' . $release . '/test-app'
@@ -13,7 +13,7 @@
     clone_repository
     build_images
     run_composer
-    update_permissions
+    {{-- update_permissions --}}
     update_symlinks
     build_containers
 @endstory
@@ -31,24 +31,20 @@
 @endtask
 
 @task('run_composer')
-    echo "Starting deployment ({{ $release }})"
+    echo "Starting deployment ({{ $release }})" 
     cd {{ $new_release_dir }}
-    
-    {{-- Set the APP_MOUNT variable in the   --}}
-    APP_MOUNT={{ $app_mount }}
-
+    export APP_MOUNT={{ $app_mount }}
     docker-compose -f build/docker-compose.base.yml -f build/docker-compose.prod.yml run --rm php-fpm bash -c "composer install --prefer-dist --no-scripts -q -o"
-    {{-- composer install --prefer-dist --no-scripts -q -o --}}
 @endtask
 
-@task('update_permissions')
+{{-- @task('update_permissions')
     cd {{ $release_dir }};
     chgrp -R www-data {{ $release }}
     chmod -R ug+rwx {{ $release }}
-@endtask
+@endtask --}}
 
 @task('update_symlinks')
-    echo "Linking "
+    echo "Linking {{ $new_release_dir }} -> {{ $app_dir }}" 
     {{-- rm -rf {{ $new_release_dir }}/storage
     ln -nfs {{ $app_dir }}/storage {{ $new_release_dir }}/storage
 
