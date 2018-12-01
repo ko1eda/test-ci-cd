@@ -25,14 +25,14 @@
 
 @task('build_images')
     echo 'Building container images'
-    cd {{ $new_release_dir }}/build
-    docker-compose -f docker-compose.base.yml -f docker-compose.prod.yml build
+    cd {{ $new_release_dir }}
+    docker-compose -f build/docker-compose.base.yml -f build/docker-compose.prod.yml build
 @endtask
 
 @task('run_composer')
     echo "Starting deployment ({{ $release }})"
     cd {{ $new_release_dir }}
-    docker-compose -f docker-compose.base.yml -f docker-compose.prod.yml run --rm php-fpm bash -c "composer install --prefer-dist --no-scripts -q -o"
+    docker-compose -f build/docker-compose.base.yml -f build/docker-compose.prod.yml run --rm php-fpm bash -c "composer install --prefer-dist --no-scripts -q -o"
     {{-- composer install --prefer-dist --no-scripts -q -o --}}
 @endtask
 
@@ -59,7 +59,7 @@
 
 @task('build_containers')
     echo 'Building new containers'
-    cd {{ $new_release_dir }}/build
-    docker-compose -f docker-compose.base.yml -f docker-compose.prod.yml down && \
-    docker-compose -f docker-compose.base.yml -f docker-compose.prod.yml up -d 
+    cd {{ $new_release_dir }}
+    docker-compose -f build/docker-compose.base.yml -f build/docker-compose.prod.yml down && \
+    docker-compose -f build/docker-compose.base.yml -f build/docker-compose.prod.yml up -d 
 @endtask
