@@ -3,10 +3,18 @@
 ## Steps to setup CI/CD Pipeline
 1. Gitlab. Follow this tutorial https://docs.gitlab.com/ee/ci/examples/laravel_with_gitlab_and_envoy/
 2. Gitlab CI settings for laravel https://laracasts.com/discuss/channels/testing/laravel-ci-testing-with-gitlab
-3. Setting up envoyer (serversforhackers) https://serversforhackers.com/c/deploying-with-envoy-cast (note envoyer doesn't work on windows so use docker as proxy)
+3. Setting up envoyer (serversforhackers) https://serversforhackers.com/c/deploying-with-envoy-cast 
+  + note envoyer doesn't work on windows so use docker as proxy -- see docker file)
+4. You will need a new user on your server that has ssh login access, this user will be the deployer runner
   + Setting up a new user in aws (this will be the deployer user and we will create an ssh key for that user to log into the server with) https://aws.amazon.com/premiumsupport/knowledge-center/new-user-accounts-linux-instance/
   + Note that you need to run deployer as the deployer user you created so that user will need to be able to ssh into the server (see tutorial above)
-4. Configuring /.ssh/config file https://nerderati.com/2011/03/17/simplify-your-life-with-an-ssh-config-file/
+4. You will need an sssh config file for envoyer to know how to access the server's -- Configuring /.ssh/config file https://nerderati.com/2011/03/17/simplify-your-life-with-an-ssh-config-file/
+5. The new user may need sudo access to run certain commands. Enable sudo access for new user https://www.helicaltech.com/create-multiple-sudo-users-to-ec2-amazon-linux/
+```
+sudo su
+visudo 
+newuser ALL=(ALL)NOPASSWD:ALL (enter this on the last line of the file, save and quit)
+```
 
 
 ## Steps to setup the Server 

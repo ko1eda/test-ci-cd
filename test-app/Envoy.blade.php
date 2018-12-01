@@ -12,10 +12,11 @@
 @story('deploy')
     clone_repository
     build_images
-    run_composer
-    {{-- update_permissions --}}
+    install_dependencies
+    move_env
     update_symlinks
     build_containers
+    update_permissions
 @endstory
 
 @task('clone_repository')
@@ -27,21 +28,22 @@
 @task('build_images')
     echo 'Building container images'
     cd {{ $new_release_dir }}/build
+    export APP_MOUNT={{ $app_mount }}
     docker-compose -f docker-compose.base.yml -f docker-compose.prod.yml build
 @endtask
 
-@task('run_composer')
+@task('install_dependencies')
     echo "Starting deployment ({{ $release }})" 
     cd {{ $new_release_dir }}
     export APP_MOUNT={{ $app_mount }}
-    docker-compose -f build/docker-compose.base.yml -f build/docker-compose.prod.yml run --rm php-fpm bash -c "composer install --prefer-dist --no-scripts -q -o"
+    echo "Running composer install" 
+    docker-compose -f build/docker-compose.base.yml -f build/docker-compose.prod.yml run --rm --user 1002 php-fpm bash -c "composer install --prefer-dist --no-scripts -q -o"
 @endtask
 
-{{-- @task('update_permissions')
-    cd {{ $release_dir }};
-    chgrp -R www-data {{ $release }}
-    chmod -R ug+rwx {{ $release }}
-@endtask --}}
+@task('move_env')
+    echo "Moving .env file from build to app"
+    cp {{ $new_release_dir }}/build/php/.env {{ $new_release_dir }}/test-app/.env 
+@endtask
 
 @task('update_symlinks')
     echo "Linking {{ $new_release_dir }} -> {{ $app_dir }}" 
@@ -61,6 +63,20 @@
 @task('build_containers')
     echo 'Building new containers'
     cd {{ $new_release_dir }}/build
+    export APP_MOUNT="/srv/app/test-app/"
     docker-compose -f docker-compose.base.yml -f docker-compose.prod.yml down && \
     docker-compose -f docker-compose.base.yml -f docker-compose.prod.yml up -d 
 @endtask
+
+{{-- Doesn't work because files are owned by root and user doesn't have write permissions --}}
+@task('update_permissions')
+    echo "Updating file permissions" 
+    cd {{ $app_dir }}/test-app
+    sudo chown -R deployer:www-data storage/ 
+    sudo chmod -R 2770 storage/
+    {{-- sudo find storage/ -type f -exec chmod -R 660 {} + --}}
+@endtask
+
+{{-- @task('lock_build_directory')
+  Change permissions so that the build folder cannot be easily accessed
+@endtask --}}
