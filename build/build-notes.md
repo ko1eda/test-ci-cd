@@ -17,6 +17,10 @@ newuser ALL=(ALL)NOPASSWD:ALL (enter this on the last line of the file, save and
 ```
 6. Do not generate new laravel keys for each application instance you have, the application key is used to encrpyt/decrypt sensative information from the app and must be the same
   + https://laracasts.com/discuss/channels/general-discussion/app-key-for-laravel-app-in-a-different-server
+7. Note that you will not need to have composer install specific dependencies like predis, they will be added to your composer.json file as you develop the application. The single composer install statement will install all your composer dependencies 
+```
+docker-compose -f build/docker-compose.base.yml -f build/docker-compose.prod.yml run --rm --user 1002 php-fpm bash -c "composer install --prefer-dist --no-scripts -q -o"
+```
 
 
 ## Steps to setup the Server 
