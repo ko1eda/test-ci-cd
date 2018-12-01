@@ -25,7 +25,7 @@ usermod -aG www-data ec2-user && \
 groupmod -g 1001 www-data 
 
 # Set permissions on the serve directory 
-chown -R ec2-user:www-data /srv && \
+chown -R root:www-data /srv && \
 chmod -R +2770 /srv
 
 # If a deployer user doesn't exist create one 
@@ -34,6 +34,9 @@ if [ -z $( grep deployer /etc/passwd) ]
     useradd deployer && \ 
     usermod -aG www-data deployer
     usermod -aG docker deployer
+
+    # Then give that new user sudo access
+    echo deployer ALL=(ALL)NOPASSWD:ALL >> /etc/sudoers
 fi
 
 # Next switch to deployer user
