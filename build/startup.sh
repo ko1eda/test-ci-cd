@@ -33,11 +33,15 @@ if [ -z $( grep deployer /etc/passwd) ]
   then
     useradd deployer && \ 
     usermod -aG www-data deployer
+    usermod -aG docker deployer
 fi
 
 # Next switch to deployer user
 # note that you can only switch to this user account if you are already operating as root. This is because the deployer account was not created with a pw  
-su deployer 
+su deployer
+
+# Add docker-compose path to path for deployer user
+export PATH=/usr/local/bin:$PATH
 
 # Pull ssh key from S3,
 
@@ -45,10 +49,14 @@ su deployer
 if [ ! -e /home/deployer/.ssh/id_rsa ]
   then 
     ssh-keygen -o -t rsa -b 4096 -f /home/deployer/.ssh/id_rsa -q -N "" # possibly pull ssh key down from s3 or something this way each new server doesn't have to generate it
+    chmod 600 /home/deployer/.ssh/id_rsa
 fi
 
-# After the key is downloaded switch to /srv/ directory and clone the project
-cd /srv && \
-yes | git clone git@gitlab.com:koleda/test-ci-cd.git && \
+# If no ssh key exists to log in as the deployer user create one
+# if [! -e /home/deployer/.ssh/authorized_keys ]
+#   then
+#     ssh-keygen -o -t rsa -b 4096 -f /home/deployer/.ssh/authorized_keys -q -N ""
+#     chmod 600 /home/deployer/.ssh/authorized_keys 
+# fi 
 
 # reboot

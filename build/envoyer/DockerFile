@@ -1,0 +1,39 @@
+FROM ubuntu:18.04
+
+LABEL author="Christopher Koleda" version="0.1.0"
+
+RUN apt-get update && \
+  apt-get install -y --no-install-recommends locales locales-all
+
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en_US
+ENV LC_ALL en_US.UTF-8
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+  apt-get install -y curl zip unzip git software-properties-common && \
+  add-apt-repository -y ppa:ondrej/php && \
+  apt-get update && \
+  apt-get install -y php7.2-cli php7.2-gd php7.2-mysql php7.2-gmp\
+  php7.2-imap libphp-predis php7.2-mbstring php7.2-xml php7.2-curl && \
+  php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
+  php -r "if (hash_file('SHA384', 'composer-setup.php') === '93b54496392c062774670ac18b134c3b3a95e5a5e5c8f1a9f115f203b75bf9a129d5daa8ba6a13e2cc8a1da0806388a8') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
+  php composer-setup.php && \
+  php -r "unlink('composer-setup.php');" && \
+  mv composer.phar /usr/local/bin/composer && \
+  composer global require laravel/envoy && \
+  export PATH=/root/.composer/vendor/bin:$PATH && \
+  mkdir /run/php && \
+  apt-get remove -y --purge software-properties-common && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+  usermod -u 1001 www-data && \
+  groupmod -g 1001 www-data
+
+COPY config /root/.ssh/config-test
+COPY my-instance-key-pair.pem /root/.ssh/key.pem
+
+# RUN cp /root/.ssh/config-test /root/.ssh/config && \
+#   cp /root/.ssh/my-instance-key-pair.pem /root/.ssh/key.pem
+
+WORKDIR /var/www/html

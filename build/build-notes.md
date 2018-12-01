@@ -3,6 +3,10 @@
 ## Steps to setup CI/CD Pipeline
 1. Gitlab. Follow this tutorial https://docs.gitlab.com/ee/ci/examples/laravel_with_gitlab_and_envoy/
 2. Gitlab CI settings for laravel https://laracasts.com/discuss/channels/testing/laravel-ci-testing-with-gitlab
+3. Setting up envoyer (serversforhackers) https://serversforhackers.com/c/deploying-with-envoy-cast (note envoyer doesn't work on windows so use docker as proxy)
+  + Setting up a new user in aws (this will be the deployer user and we will create an ssh key for that user to log into the server with) https://aws.amazon.com/premiumsupport/knowledge-center/new-user-accounts-linux-instance/
+  + Note that you need to run deployer as the deployer user you created so that user will need to be able to ssh into the server (see tutorial above)
+4. Configuring /.ssh/config file https://nerderati.com/2011/03/17/simplify-your-life-with-an-ssh-config-file/
 
 
 ## Steps to setup the Server 
@@ -15,7 +19,7 @@ run --rm -it -v $(pwd):/opt koledachris/php-fpm:1.0.0 bash -c "cd /opt && compos
 3. Move .env file from php folder into test-app directory
 ```
 sudo cp srv/domain_name/build/.env  /srv/domain_name/test-app/.env
-```
+``` 
 4. Generate a new application key (run your php container and use it run)
 ```
 docker run --rm -it -v $(pwd):/opt -w /opt koledachris/php-fpm:1.0.0 php artisan key:generate

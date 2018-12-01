@@ -1,1 +1,3 @@
 *.dev.yml
+envoyer/config
+envoyer/*.pem
