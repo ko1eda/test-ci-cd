@@ -15,6 +15,8 @@ sudo su
 visudo 
 newuser ALL=(ALL)NOPASSWD:ALL (enter this on the last line of the file, save and quit)
 ```
+6. Do not generate new laravel keys for each application instance you have, the application key is used to encrpyt/decrypt sensative information from the app and must be the same
+  + https://laracasts.com/discuss/channels/general-discussion/app-key-for-laravel-app-in-a-different-server
 
 
 ## Steps to setup the Server 
