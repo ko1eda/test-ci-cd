@@ -39,3 +39,6 @@ RUN chmod -R 600 /root/.ssh/
 #   cp /root/.ssh/my-instance-key-pair.pem /root/.ssh/key.pem
 
 WORKDIR /var/www/html 
+
+
+CMD bash 
