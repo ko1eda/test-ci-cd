@@ -1,6 +1,6 @@
 # Build Notes
 
-## Steps to setup CI/CD Pipeline
+## Steps to setup CD
 1. Gitlab. Follow this tutorial https://docs.gitlab.com/ee/ci/examples/laravel_with_gitlab_and_envoy/
 2. Gitlab CI settings for laravel https://laracasts.com/discuss/channels/testing/laravel-ci-testing-with-gitlab
 3. Setting up envoyer (serversforhackers) https://serversforhackers.com/c/deploying-with-envoy-cast 
@@ -24,6 +24,25 @@ docker-compose -f build/docker-compose.base.yml -f build/docker-compose.prod.yml
 8. Possible steps to improve envoy script https://bosnadev.com/2015/01/07/brief-introduction-laravel-envoy/
   + note that you can use functions in bash scripts https://ryanstutorials.net/bash-scripting-tutorial/bash-functions.php
 
+## Steps to setup CI
+9. Article talks about setting up gitlab runner, setting up a private gitlab server(didn't actually do this part), etc. 
+  + https://www.digitalocean.com/community/tutorials/how-to-set-up-continuous-integration-pipelines-with-gitlab-ci-on-ubuntu-16-04 
+10. Talks about setting up docker container registries on gitlab (with example)
+  + again follow this tutoruial https://docs.gitlab.com/ee/ci/examples/laravel_with_gitlab_and_envoy/
+  + https://www.digitalocean.com/community/tutorials/how-to-build-docker-images-and-host-a-docker-image-repository-with-gitlab
+```
+# First cd into the directory that contains the dockerfile you want to use for the image
+cd /build/php 
+docker build -t registry.gitlab.com/koleda/test-ci-cd/koledachris/php-fpm:2.0.0 .
+docker push registry.gitlab.com/koleda/test-ci-cd/koledachris/php-fpm:2.0.0 
+```
+
+
+### Other useful links that helped during set up 
++ __Running commands in a docker container that does not have them installed (ex netstat in an alpine container__
+  + https://stackoverflow.com/questions/40350456/docker-any-way-to-list-open-sockets-inside-a-running-docker-container
++ How ports work in general and in docker 
+  + https://stackoverflow.com/questions/3329641/how-do-multiple-clients-connect-simultaneously-to-one-port-say-80-on-a-server
 
 ## Steps to setup the Server 
 ### To Build Project
