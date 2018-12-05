@@ -36,7 +36,7 @@ cd /build/php
 docker build -t registry.gitlab.com/koleda/test-ci-cd/koledachris/php-fpm:2.0.0 .
 docker push registry.gitlab.com/koleda/test-ci-cd/koledachris/php-fpm:2.0.0 
 ```
-
+11. Setting up testing with PHP https://docs.gitlab.com/ee/ci/examples/php.html#test-php-projects-using-the-docker-executor
 
 ### Other useful links that helped during set up 
 + __Running commands in a docker container that does not have them installed (ex netstat in an alpine container__
