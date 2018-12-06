@@ -98,8 +98,8 @@
     echo "Updating build directory permissions" 
     {{-- Then restrict permission on the build files --}}
     cd {{ $app_dir }}
-    sudo chown -R root:ec2-user build
-    sudo chmod -R 770 build
+    sudo chown -R root:ec2-user build ci
+    sudo chmod -R 770 build ci
 @endtask
 
 {{-- Not part of the story but useful for testing  --}} 
