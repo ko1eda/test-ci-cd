@@ -19,13 +19,3 @@ php composer.phar install
 # install phpunit
 curl --location --output /usr/local/bin/phpunit https://phar.phpunit.de/phpunit.phar
 chmod +x /usr/local/bin/phpunit
-
-# Copy over testing configuration.
-cp .env.testing .env
-
-# Generate an application key. Re-cache.
-php artisan key:generate
-php artisan config:cache
-
-# Run database migrations.
-php artisan migrate

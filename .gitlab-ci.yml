@@ -1,42 +1,37 @@
-services:
-  - mysql:5.7
-
 variables:
-  MYSQL_DATABASE: homestead
-  MYSQL_ROOT_PASSWORD: secret
-  DB_HOST: mysql
-  DB_USERNAME: root
-
+  MYSQL_ROOT_PASSWORD: root
+  MYSQL_DATABASE: test_db
+  MYSQL_USER: test_user
+  MYSQL_PASSWORD: password
 stages:
   - testing
-  - staging
-  - deployment
+  # - staging
+  # - deployment
 
 before_script:
-  - ci/scripts/gitlab.sh
+  - bash ci/scripts/before.sh
 
-unit_test:
+unit_testing:
+  image: php:7.2
+  services:
+    - mysql:5.7
   stage: testing
   script:
-    - cp .env.example .env
-    - composer install
-    - php artisan key:generate
-    - php artisan migrate
-    - vendor/bin/phpunit
+    - bash ci/scripts/unit_test.sh
 
-deploy_production:
-  stage: deployment
-  script:
-    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
-    - eval $(ssh-agent -s)
-    - ssh-add <(echo "$SSH_PRIVATE_KEY")
-    - mkdir -p ~/.ssh
-    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+# deploy_production:
+#   stage: deployment
+#   script:
+#     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+#     - eval $(ssh-agent -s)
+#     - ssh-add <(echo "$SSH_PRIVATE_KEY")
+#     - mkdir -p ~/.ssh
+#     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
-    - ~/.composer/vendor/bin/envoy run deploy
-  environment:
-    name: production
-    url: http://192.168.1.1
-  when: manual
-  only:
-    - master
+#     - ~/.composer/vendor/bin/envoy run deploy
+#   environment:
+#     name: production
+#     url: http://192.168.1.1
+#   when: manual
+#   only:
+#     - master
