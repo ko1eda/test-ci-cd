@@ -9,19 +9,28 @@ variables:
   MYSQL_USER: test_user
   MYSQL_PASSWORD: password
 stages:
+  - build
   - testing
   # - staging
   # - deployment
 
 before_script:
-  - bash ci/scripts/before.sh
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY # allow this to push built container to gitlab registry
+
+build_containers:
+  image: docker/compose:latest
+  stage: build
+  script:
+    - cd build
+    - docker-compose -f docker-compose.gitlab.yml build 
+    - docker-compose push # need to figure out how to push here (how to get credentials)
 
 unit_testing:
   stage: testing
   script:
     - bash ci/scripts/unit_testing.sh
 
-# deploy_production:
+# deploy_production:  
 #   stage: deployment
 #   script:
 #     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'

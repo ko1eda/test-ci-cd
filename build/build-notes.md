@@ -37,6 +37,7 @@ docker build -t registry.gitlab.com/koleda/test-ci-cd/koledachris/php-fpm:2.0.0 
 docker push registry.gitlab.com/koleda/test-ci-cd/koledachris/php-fpm:2.0.0 
 ```
 11. Setting up testing with PHP https://docs.gitlab.com/ee/ci/examples/php.html#test-php-projects-using-the-docker-executor
+12. Using docker in docker to build container images via gitlab ci https://docs.gitlab.com/ee/ci/docker/using_docker_build.html
 
 ### Other useful links that helped during set up 
 + __Running commands in a docker container that does not have them installed (ex netstat in an alpine container__
