@@ -1,5 +1,8 @@
+# run the following commands inside the application directory 
+cd test-app
+
 # Copy over testing configuration.
-cp test-app/.env.testing test-app/.env
+cp .env.testing .env
 
 # Install dependencies 
 composer install
@@ -12,4 +15,4 @@ php artisan key:generate
 php artisan migrate
 
 # Run phpunit
-/vendor/bin/phpunit
+phpunit
