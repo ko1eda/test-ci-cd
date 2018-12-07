@@ -33,7 +33,6 @@ unit_testing:
   stage: testing
   image: registry.gitlab.com/koleda/test-ci-cd/php-fpm:1.0.0
   before_script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
     - curl --location --output /usr/local/bin/phpunit https://phar.phpunit.de/phpunit.phar
     - chmod +x /usr/local/bin/phpunit
   services:
@@ -62,7 +61,6 @@ deploy_production:
   stage: deployment
   image: registry.gitlab.com/koleda/php-fpm:1.0.0
   before_script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
     - composer global require laravel/envoy
   script:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
