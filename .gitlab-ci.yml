@@ -42,7 +42,7 @@ deploy_production:
     - mkdir -p ~/.ssh
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
-    - envoy run deploy
+    - cd test-app/ && ~/.composer/vendor/bin/envoy run deploy --IP=34.230.63.70
   environment:
     name: production
     url: http://34.230.63.70

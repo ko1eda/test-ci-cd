@@ -38,6 +38,15 @@ docker push registry.gitlab.com/koleda/test-ci-cd/koledachris/php-fpm:2.0.0
 ```
 11. Setting up testing with PHP https://docs.gitlab.com/ee/ci/examples/php.html#test-php-projects-using-the-docker-executor
 12. Using docker in docker to build container images via gitlab ci https://docs.gitlab.com/ee/ci/docker/using_docker_build.html
+13. Programatically listing servers in envoy https://laracasts.com/discuss/channels/general-discussion/is-it-possible-to-feed-the-envoybladephp-file-with-data-from-db?page=1
+  + How strict host checking setting in .ssh config can help with this https://askubuntu.com/questions/123072/ssh-automatically-accept-keys
+
+### Problems
+14. A problem that occurued during setup was that my server needs to whitelist ssh connections from gitlab shared runners but there is no concrete IP address range 
+  + See Here https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/1985#note_34857826
+  + __Possible solutions:__ 
+    1. Host your own gitlab runner see this video here for how to do that https://www.youtube.com/watch?v=RV0845KmsNI
+
 
 ### Other useful links that helped during set up 
 + __Running commands in a docker container that does not have them installed (ex netstat in an alpine container__

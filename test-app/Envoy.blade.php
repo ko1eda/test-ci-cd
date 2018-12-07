@@ -1,4 +1,4 @@
-@servers(['web' => 'test-ci'])
+@servers(['web' => "deployer@{$IP}"])
 
 @setup
     $repository = 'git@gitlab.com:koleda/test-ci-cd.git';
