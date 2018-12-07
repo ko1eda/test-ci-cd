@@ -11,13 +11,23 @@ stages:
 
 build_containers:
   stage: build 
-  image: tmaier/docker-compose:18.09
-  before_script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY # allow this to push built container to gitlab registry
+  image: docker:stable
+  services:
+   - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay2
+    # PORT: 2375
+    DOCKER_HOST: tcp://docker:2375/
   script:
-    - cd build
+    - apk update
+    - apk add py-pip
+    - pip install docker-compose
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - cd build/
     - docker-compose -f docker-compose.gitlab.yml build 
     - docker-compose push # need to figure out how to push here (how to get credentials)
+
+    
 
 unit_testing:
   stage: testing
