@@ -12,7 +12,6 @@
 
 @story('deploy')
     clone_repository
-    build_images
     install_composer_dependencies
     install_npm_dependencies
     move_env
@@ -28,12 +27,12 @@
     git clone --depth 1 {{ $repository }} {{ $new_release_dir }}
 @endtask
 
-@task('build_images')
+{{-- @task('build_images')
     echo 'Building container images'
     cd {{ $new_release_dir }}/build
     export APP_MOUNT={{ $release_mount }}
-    docker-compose -f docker-compose.base.yml -f docker-compose.prod.yml build
-@endtask
+    docker-compose -f docker-compose.prod.yml build
+@endtask --}}
 
 @task('install_composer_dependencies')
     echo "Starting deployment ({{ $release }})" ;
@@ -41,7 +40,7 @@
     export APP_MOUNT={{ $release_mount }};
 
     echo "Running composer install";
-    docker-compose -f build/docker-compose.base.yml -f build/docker-compose.prod.yml run --rm --user 1002 php-fpm composer install --prefer-dist --no-scripts -q -o;
+    docker-compose -f build/docker-compose.prod.yml run --rm --user 1002 php-fpm composer install --prefer-dist --no-scripts -q -o;
 
     {{-- echo "Optamizing composer installs";
     docker-compose -f build/docker-compose.base.yml -f build/docker-compose.prod.yml run --rm --user 1002 php-fpm php artisan clear-compiled --env=production && php artisan optimize --env=production --}}
@@ -51,7 +50,7 @@
     echo "Running npm install and building assets"
     cd {{ $new_release_dir }}
     export APP_MOUNT={{ $release_mount }}
-    docker-compose -f build/docker-compose.base.yml -f build/docker-compose.prod.yml run --rm -w /var/www/html node bash -c "npm install && npm run production"
+    docker-compose -f build/docker-compose.prod.yml run --rm -w /var/www/html node bash -c "npm install && npm run production"
 @endtask
 
 @task('move_env')
@@ -79,14 +78,14 @@
     echo 'Building new containers'
     cd {{ $new_release_dir }}/build
     export APP_MOUNT={{ $app_dir}}/{{ $app_name}}/
-    docker-compose -f docker-compose.base.yml -f docker-compose.prod.yml down && \
-    docker-compose -f docker-compose.base.yml -f docker-compose.prod.yml up -d 
+    docker-compose -f docker-compose.prod.yml down && \
+    docker-compose -f docker-compose.prod.yml up -d 
 @endtask
 
 @task('run_migrations')
     echo "Running php artisan migrate"
     cd {{ $new_release_dir }}/build
-    docker-compose -f docker-compose.base.yml -f docker-compose.prod.yml run --rm php-fpm php artisan migrate
+    docker-compose -f docker-compose.prod.yml run --rm php-fpm php artisan migrate
 @endtask
 
 @task('update_permissions')

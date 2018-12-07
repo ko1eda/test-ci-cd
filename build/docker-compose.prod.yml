@@ -1,33 +1,76 @@
 version: '3'
 
-services:
+services : 
   nginx:
+    image: registry.gitlab.com/koleda/test-ci-cd/nginx:1.0.0
     volumes: 
-    - ${APP_MOUNT}:/var/www/html
-    # - ${LETSENCRYPT_MOUNT}:/etc/pki/tls/letsencrypt
+      - ${APP_MOUNT}:/var/www/html
+      # - ${LETSENCRYPT_MOUNT}:/etc/pki/tls/letsencrypt
+    networks: 
+      - appnet
     ports:
-    - 80:80
-    - 443:443
+      - 80:80
+      - 443:443
+    depends_on:
+      - php-fpm
+    restart: always
 
   php-fpm:
+    image: registry.gitlab.com/koleda/test-ci-cd/php-fpm:1.0.0
     volumes: 
-    - ${APP_MOUNT}:/var/www/html
-
+      - ${APP_MOUNT}:/var/www/html
+    networks: 
+    - appnet
+    restart: always
+  
   queue-worker:
+    image: registry.gitlab.com/koleda/test-ci-cd/queue-worker:1.0.0
     volumes: 
-    - ${APP_MOUNT}:/var/www/html
-
+      - ${APP_MOUNT}:/var/www/html
+    networks: 
+      - appnet
+    depends_on:
+      - php-fpm
+    restart: always
+  
   mysql:
+    image: registry.gitlab.com/koleda/test-ci-cd/mysql:1.0.0
+    volumes:
+      - mysql_data:/var/lib/mysql
     environment: 
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       # - MYSQL_INITDB_SKIP_TZINFO=yes
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    networks: 
+      - appnet
     ports:
       - 3306:3306
+    restart: always
+
+  redis:
+    image: redis:5.0.0-alpine
+    networks: 
+      - appnet  
+    volumes:
+      - redis_data:/data
+    restart: always
 
   node:
+    image: registry.gitlab.com/koleda/test-ci-cd/node:1.0.0
     volumes: 
     - ${APP_MOUNT}:/var/www/html
+    networks:
+      - appnet
 
+
+# External means use an external volume
+# If not it would create a volume scoped with the root dir name
+volumes:
+  mysql_data:
+  redis_data:
+
+# Same as volume comments above
+networks: 
+  appnet:
