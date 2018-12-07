@@ -42,10 +42,12 @@ docker push registry.gitlab.com/koleda/test-ci-cd/koledachris/php-fpm:2.0.0
   + How strict host checking setting in .ssh config can help with this https://askubuntu.com/questions/123072/ssh-automatically-accept-keys
 
 ### Problems
-14. A problem that occurued during setup was that my server needs to whitelist ssh connections from gitlab shared runners but there is no concrete IP address range 
+1. A problem that occurued during setup was that my server needs to whitelist ssh connections from gitlab shared runners but there is no concrete IP address range 
   + See Here https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/1985#note_34857826
   + __Possible solutions:__ 
     1. Host your own gitlab runner see this video here for how to do that https://www.youtube.com/watch?v=RV0845KmsNI
+2. Another issue was that the runner was not pushing the images to my docker registry this because the format for the image name was incorrect
+  + see https://gitlab.com/gitlab-org/gitlab-ce/issues/23339  Lorenzo Luconi Trombacchi @loreluc commented 2 years ago (this is the answer)
 
 
 ### Other useful links that helped during set up 
