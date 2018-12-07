@@ -28,7 +28,6 @@ build_containers:
     - docker-compose -f docker-compose.gitlab.yml push # need to figure out how to push here (how to get credentials)
 
     
-
 unit_testing:
   stage: testing
   image: registry.gitlab.com/koleda/test-ci-cd/php-fpm:1.0.0
@@ -47,20 +46,9 @@ unit_testing:
     - php artisan migrate
     - phpunit 
 
-# unit_testing:
-#   stage: testing
-#   image: php:7.2
-#   before_script:
-#     - bash ci/scripts/before.sh
-#   services:
-#     - mysql:5.7
-#     - redis:5.0.0-alpine
-#   script:
-#     - bash ci/scripts/unit_testing.sh
-
 deploy_production:  
   stage: deployment
-  image: registry.gitlab.com/koleda/php-fpm:1.0.0
+  image: registry.gitlab.com/koleda/test-ci-cd/php-fpm:1.0.0
   before_script:
     - composer global require laravel/envoy
   script:
