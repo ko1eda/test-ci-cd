@@ -5,36 +5,53 @@ variables:
   MYSQL_PASSWORD: password
   
 stages:
+  - build
   - testing
   - deployment
 
-# before_script:
-#   - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY # allow this to push built container to gitlab registry
-
-# build_containers:
-#   image: docker/compose:latest
-#   stage: build
-#   script:
-#     - cd build
-#     - docker-compose -f docker-compose.gitlab.yml build 
-#     - docker-compose push # need to figure out how to push here (how to get credentials)
+build_containers:
+  stage: build 
+  image: tmaier/docker-compose:18.09
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY # allow this to push built container to gitlab registry
+  script:
+    - cd build
+    - docker-compose -f docker-compose.gitlab.yml build 
+    - docker-compose push # need to figure out how to push here (how to get credentials)
 
 unit_testing:
   stage: testing
-  image: php:7.2
+  image: registry.gitlab.com/koleda/php-fpm:1.0.0
   before_script:
-    - bash ci/scripts/before.sh
+    - curl --location --output /usr/local/bin/phpunit https://phar.phpunit.de/phpunit.phar
+    - chmod +x /usr/local/bin/phpunit
   services:
-    - mysql:5.7
+    - registry.gitlab.com/koleda/mysql:1.0.0
     - redis:5.0.0-alpine
   script:
-    - bash ci/scripts/unit_testing.sh
+    - cd test-app/
+    - cp .env.testing .env
+    - composer install
+    - php artisan key:generate
+    - php artisan migrate
+    - phpunit 
+
+# unit_testing:
+#   stage: testing
+#   image: php:7.2
+#   before_script:
+#     - bash ci/scripts/before.sh
+#   services:
+#     - mysql:5.7
+#     - redis:5.0.0-alpine
+#   script:
+#     - bash ci/scripts/unit_testing.sh
 
 deploy_production:  
   stage: deployment
-  image: php:7.2
+  image: registry.gitlab.com/koleda/php-fpm:1.0.0
   before_script:
-    - bash ci/scripts/before.sh
+    - composer global require laravel/envoy
   script:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
     - eval $(ssh-agent -s)
@@ -42,10 +59,10 @@ deploy_production:
     - mkdir -p ~/.ssh
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
-    - cd test-app/ && ~/.composer/vendor/bin/envoy run deploy --IP=34.230.63.70
+    - cd test-app/ && ~/.composer/vendor/bin/envoy run deploy --IP=34.229.210.64
   environment:
     name: production
-    url: http://34.230.63.70
+    url: http:/34.229.210.64
   when: manual
   only:
     - master
