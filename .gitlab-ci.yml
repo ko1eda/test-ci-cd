@@ -36,7 +36,8 @@ unit_testing:
     - curl --location --output /usr/local/bin/phpunit https://phar.phpunit.de/phpunit.phar
     - chmod +x /usr/local/bin/phpunit
   services:
-    - registry.gitlab.com/koleda/test-ci-cd/mysql:1.0.0
+    - name: registry.gitlab.com/koleda/test-ci-cd/mysql:1.0.0
+      alias: mysql
     - redis:5.0.0-alpine
   script:
     - cd test-app/
