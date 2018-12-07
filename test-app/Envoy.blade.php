@@ -12,6 +12,7 @@
 
 @story('deploy')
     clone_repository
+    login_to_gitlab_registry
     install_composer_dependencies
     install_npm_dependencies
     move_env
@@ -27,18 +28,15 @@
     git clone --depth 1 {{ $repository }} {{ $new_release_dir }}
 @endtask
 
-{{-- @task('build_images')
-    echo 'Building container images'
-    cd {{ $new_release_dir }}/build
-    export APP_MOUNT={{ $release_mount }}
-    docker-compose -f docker-compose.prod.yml build
-@endtask --}}
+@task('login_to_gitlab_registry')
+    {{-- login to gitlab with the passed in credential so that we can pull the images from our private repo--}}
+    docker login -u koleda -p {{ $GITLAB_SECRET }} registry.gitlab.com;
+@endtask
 
 @task('install_composer_dependencies')
     echo "Starting deployment ({{ $release }})" ;
     cd {{ $new_release_dir }};
     export APP_MOUNT={{ $release_mount }};
-
     echo "Running composer install";
     docker-compose -f build/docker-compose.prod.yml run --rm --user 1002 php-fpm composer install --prefer-dist --no-scripts -q -o;
 
@@ -48,7 +46,6 @@
 
 @task('install_npm_dependencies')
     echo "Running npm install and building assets"
-    cd {{ $new_release_dir }}
     export APP_MOUNT={{ $release_mount }}
     docker-compose -f build/docker-compose.prod.yml run --rm -w /var/www/html node bash -c "npm install && npm run production"
 @endtask
@@ -77,6 +74,7 @@
 @task('build_containers')
     echo 'Building new containers'
     cd {{ $new_release_dir }}/build
+
     export APP_MOUNT={{ $app_dir}}/{{ $app_name}}/
     docker-compose -f docker-compose.prod.yml down && \
     docker-compose -f docker-compose.prod.yml up -d 

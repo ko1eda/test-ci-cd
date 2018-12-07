@@ -58,7 +58,7 @@ deploy_production:
     - mkdir -p ~/.ssh
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
-    - cd test-app/ && ~/.composer/vendor/bin/envoy run deploy --IP=34.229.210.64
+    - cd test-app/ && ~/.composer/vendor/bin/envoy run deploy --IP=34.229.210.64 --GITLAB_SECRET=$GITLAB_SECRET
   environment:
     name: production
     url: http:/34.229.210.64
