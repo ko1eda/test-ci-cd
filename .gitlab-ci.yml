@@ -25,7 +25,7 @@ build_containers:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
     - cd build/
     - docker-compose -f docker-compose.gitlab.yml build 
-    - docker-compose push # need to figure out how to push here (how to get credentials)
+    - docker-compose -f docker-compose.gitlab.yml push # need to figure out how to push here (how to get credentials)
 
     
 
