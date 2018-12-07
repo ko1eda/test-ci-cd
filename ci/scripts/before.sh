@@ -21,3 +21,9 @@ mv composer.phar /usr/local/bin/composer
 # install phpunit
 curl --location --output /usr/local/bin/phpunit https://phar.phpunit.de/phpunit.phar
 chmod +x /usr/local/bin/phpunit
+
+# install envoy
+composer global require laravel/envoy
+
+# Export path to global composer installs
+export PATH=~/.composer/vendor/bin:$PATH 
