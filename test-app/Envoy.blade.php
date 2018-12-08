@@ -46,6 +46,7 @@
 
 @task('install_npm_dependencies')
     echo "Running npm install and building assets"
+    cd {{ $new_release_dir }};
     export APP_MOUNT={{ $release_mount }}
     docker-compose -f build/docker-compose.prod.yml run --rm -w /var/www/html node bash -c "npm install && npm run production"
 @endtask
