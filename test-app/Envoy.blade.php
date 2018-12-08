@@ -1,6 +1,8 @@
 @servers(['web' => "deployer@{$IP}"])
 
 @setup
+    // $IP - the ip address of the server passed in from gitlab ci file
+    // $GITLAB_SECRET - access token passed in from gitlab ci file
     $repository = 'git@gitlab.com:koleda/test-ci-cd.git';
     $releases_dir = '/srv/releases';
     $app_dir = '/srv/app';

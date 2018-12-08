@@ -38,6 +38,7 @@ docker push registry.gitlab.com/koleda/test-ci-cd/koledachris/php-fpm:2.0.0
 ```
 11. Setting up testing with PHP https://docs.gitlab.com/ee/ci/examples/php.html#test-php-projects-using-the-docker-executor
 12. Using docker in docker to build container images via gitlab ci https://docs.gitlab.com/ee/ci/docker/using_docker_build.html
+  + Setting up docker in docker properly https://www.reddit.com/r/devops/comments/8l4jia/gitlab_cicd_concerns/ first comment 
 13. Programatically listing servers in envoy https://laracasts.com/discuss/channels/general-discussion/is-it-possible-to-feed-the-envoybladephp-file-with-data-from-db?page=1
   + How strict host checking setting in .ssh config can help with this https://askubuntu.com/questions/123072/ssh-automatically-accept-keys
 
