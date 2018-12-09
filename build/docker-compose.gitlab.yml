@@ -5,7 +5,7 @@ services :
     build: 
       context: ./nginx
       dockerfile: DockerFile
-    image: registry.gitlab.com/koleda/test-ci-cd/nginx:1.0.${CI_COMMIT_SHA}
+    image: registry.gitlab.com/koleda/test-ci-cd/nginx:${CI_PIPELINE_IID}
     networks: 
       - appnet
     depends_on:
@@ -16,7 +16,7 @@ services :
     build:
       context: ./php
       dockerfile: DockerFile
-    image: registry.gitlab.com/koleda/test-ci-cd/php-fpm:1.0.${CI_COMMIT_SHA}
+    image: registry.gitlab.com/koleda/test-ci-cd/php-fpm:${CI_PIPELINE_IID}
     networks: 
       - appnet
     restart: always
@@ -25,7 +25,7 @@ services :
     build:
       context: ./queue-worker
       dockerfile: DockerFile
-    image: registry.gitlab.com/koleda/test-ci-cd/queue-worker:1.0.${CI_COMMIT_SHA}
+    image: registry.gitlab.com/koleda/test-ci-cd/queue-worker:${CI_PIPELINE_IID}
     networks: 
       - appnet
     depends_on:
@@ -36,12 +36,20 @@ services :
     build:
       context: ./mysql
       dockerfile: DockerFile
-    image: registry.gitlab.com/koleda/test-ci-cd/mysql:1.0.${CI_COMMIT_SHA}
+    image: registry.gitlab.com/koleda/test-ci-cd/mysql:${CI_PIPELINE_IID}
     volumes:
       - mysql_data:/var/lib/mysql
     networks: 
       - appnet
     restart: always
+
+  node:
+    build:
+      context: ./node
+      dockerfile: DockerFile
+    image: registry.gitlab.com/koleda/test-ci-cd/node:${CI_PIPELINE_IID}
+    networks:
+      - appnet
 
   redis:
     image: redis:5.0.0-alpine
@@ -50,15 +58,6 @@ services :
     volumes:
       - redis_data:/data
     restart: always
-
-  node:
-    build:
-      context: ./node
-      dockerfile: DockerFile
-    image: registry.gitlab.com/koleda/test-ci-cd/node:1.0.${CI_COMMIT_SHA}
-    networks:
-      - appnet
-
 
 # External means use an external volume
 # If not it would create a volume scoped with the root dir name

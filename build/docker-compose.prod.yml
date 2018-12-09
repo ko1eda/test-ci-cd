@@ -49,6 +49,13 @@ services :
       - 3306:3306
     restart: always
 
+  node:
+    image: registry.gitlab.com/koleda/test-ci-cd/node:latest
+    volumes: 
+    - ${APP_MOUNT}:/var/www/html
+    networks:
+      - appnet
+      
   redis:
     image: redis:5.0.0-alpine
     networks: 
@@ -56,14 +63,6 @@ services :
     volumes:
       - redis_data:/data
     restart: always
-
-  node:
-    image: registry.gitlab.com/koleda/test-ci-cd/node:latest
-    volumes: 
-    - ${APP_MOUNT}:/var/www/html
-    networks:
-      - appnet
-
 
 # External means use an external volume
 # If not it would create a volume scoped with the root dir name

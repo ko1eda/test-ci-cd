@@ -9,6 +9,8 @@ stages:
   - testing
   - deployment
 
+# The multiline script below was adapted from https://stackoverflow.com/questions/47327979/how-to-use-multiple-image-tags-with-docker-compose
+# It tages every image (besides redis because redis doesn't start with 'registry.gitlab.com') as latest and pushes it to our private docker registry
 build_containers:
   stage: build 
   image: docker:stable
@@ -27,16 +29,16 @@ build_containers:
     - docker-compose -f docker-compose.gitlab.yml build 
     - docker-compose -f docker-compose.gitlab.yml push 
     - |
-      images=$(docker-compose -f docker-compose.gitlab.yml config | grep 'image:' | awk -F ':' '{ print $2 }')
+      images=$(docker-compose -f docker-compose.gitlab.yml config | grep 'image:' | awk -F ':' '{ print $2 }' | grep 'registry')
       for image in $images
         do 
-          docker tag "${image}":"1.0.${CI_COMMIT_SHA}" "${image}":latest
+          docker tag "${image}":"${CI_PIPELINE_IID}" "${image}":latest
           docker push "${image}":latest
         done 
 
 unit_testing:
   stage: testing
-  image: registry.gitlab.com/koleda/test-ci-cd/php-fpm:1.0.${CI_COMMIT_SHA}
+  image: registry.gitlab.com/koleda/test-ci-cd/php-fpm:${CI_PIPELINE_IID}
   before_script:
     - curl --location --output /usr/local/bin/phpunit https://phar.phpunit.de/phpunit.phar
     - chmod +x /usr/local/bin/phpunit
@@ -54,7 +56,7 @@ unit_testing:
 
 deploy_production:  
   stage: deployment
-  image: registry.gitlab.com/koleda/test-ci-cd/php-fpm:1.0.${CI_COMMIT_SHA}
+  image: registry.gitlab.com/koleda/test-ci-cd/php-fpm:${CI_PIPELINE_IID}
   before_script:
     - composer global require laravel/envoy
   script:
