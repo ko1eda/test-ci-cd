@@ -31,6 +31,7 @@
 @endtask
 
 @task('login_to_gitlab_registry')
+    echo 'Logging into docker registry'
     {{-- login to gitlab with the passed in credential so that we can pull the images from our private repo--}}
     docker login -u koleda -p {{ $GITLAB_SECRET }} registry.gitlab.com;
 @endtask

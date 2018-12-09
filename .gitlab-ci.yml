@@ -25,12 +25,18 @@ build_containers:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
     - cd build/
     - docker-compose -f docker-compose.gitlab.yml build 
-    - docker-compose -f docker-compose.gitlab.yml push # need to figure out how to push here (how to get credentials)
+    - docker-compose -f docker-compose.gitlab.yml push 
+    - |
+      images=$(docker-compose -f docker-compose.gitlab.yml config | grep 'image:' | awk -F ':' '{ print $2 }')
+      for image in $images
+        do 
+          docker tag "${image}":"1.0.${CI_COMMIT_SHA}" "${image}":latest
+          docker push "${image}":latest
+        done 
 
-    
 unit_testing:
   stage: testing
-  image: registry.gitlab.com/koleda/test-ci-cd/php-fpm:1.0.0
+  image: registry.gitlab.com/koleda/test-ci-cd/php-fpm:1.0.${CI_COMMIT_SHA}
   before_script:
     - curl --location --output /usr/local/bin/phpunit https://phar.phpunit.de/phpunit.phar
     - chmod +x /usr/local/bin/phpunit
@@ -48,7 +54,7 @@ unit_testing:
 
 deploy_production:  
   stage: deployment
-  image: registry.gitlab.com/koleda/test-ci-cd/php-fpm:1.0.0
+  image: registry.gitlab.com/koleda/test-ci-cd/php-fpm:1.0.${CI_COMMIT_SHA}
   before_script:
     - composer global require laravel/envoy
   script:
@@ -58,10 +64,10 @@ deploy_production:
     - mkdir -p ~/.ssh
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
-    - cd test-app/ && ~/.composer/vendor/bin/envoy run deploy --IP=34.229.210.64 --GITLAB_SECRET=$GITLAB_SECRET
+    - cd test-app/ && ~/.composer/vendor/bin/envoy run deploy --IP=3.80.236.114 --GITLAB_SECRET=$GITLAB_SECRET
   environment:
     name: production
-    url: http:/34.229.210.64
+    url: http:/3.80.236.114
   when: manual
   only:
     - master

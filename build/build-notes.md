@@ -1,6 +1,8 @@
 # Build Notes
+:) 
 
 ## Steps to setup CD
+---
 1. Gitlab. Follow this tutorial https://docs.gitlab.com/ee/ci/examples/laravel_with_gitlab_and_envoy/
 2. Gitlab CI settings for laravel https://laracasts.com/discuss/channels/testing/laravel-ci-testing-with-gitlab
 3. Setting up envoyer (serversforhackers) https://serversforhackers.com/c/deploying-with-envoy-cast 
@@ -25,6 +27,7 @@ docker-compose -f build/docker-compose.base.yml -f build/docker-compose.prod.yml
   + note that you can use functions in bash scripts https://ryanstutorials.net/bash-scripting-tutorial/bash-functions.php
 
 ## Steps to setup CI
+---
 9. Article talks about setting up gitlab runner, setting up a private gitlab server(didn't actually do this part), etc. 
   + https://www.digitalocean.com/community/tutorials/how-to-set-up-continuous-integration-pipelines-with-gitlab-ci-on-ubuntu-16-04 
 10. Talks about setting up docker container registries on gitlab (with example)
@@ -42,13 +45,24 @@ docker push registry.gitlab.com/koleda/test-ci-cd/koledachris/php-fpm:2.0.0
 13. Programatically listing servers in envoy https://laracasts.com/discuss/channels/general-discussion/is-it-possible-to-feed-the-envoybladephp-file-with-data-from-db?page=1
   + How strict host checking setting in .ssh config can help with this https://askubuntu.com/questions/123072/ssh-automatically-accept-keys
 
-### Problems
-1. A problem that occurued during setup was that my server needs to whitelist ssh connections from gitlab shared runners but there is no concrete IP address range 
+## Problems
+#### 1. A problem that occurued during setup was that my server needs to whitelist ssh connections from gitlab shared runners but there is no concrete IP address range 
   + See Here https://gitlab.com/gitlab-com/gl-infra/infrastructure/issues/1985#note_34857826
   + __Possible solutions:__ 
     1. Host your own gitlab runner see this video here for how to do that https://www.youtube.com/watch?v=RV0845KmsNI
-2. Another issue was that the runner was not pushing the images to my docker registry this because the format for the image name was incorrect
+#### 2. Another issue was that the runner was not pushing the images to my docker registry this because the format for the image name was incorrect
   + see https://gitlab.com/gitlab-org/gitlab-ce/issues/23339  Lorenzo Luconi Trombacchi @loreluc commented 2 years ago (this is the answer)
+#### 3. Tagging resources from your build system (docker images, git tags, etc)
++ Gitlab built in variables
+  + https://docs.gitlab.com/ce/ci/variables/README.html
++ Some issues to consider when developing a tagging system
+    + Solution adapted from here (Dirks comment) https://stackoverflow.com/questions/47327979/how-to-use-multiple-image-tags-with-docker-compose
++ Info about how to properly use versioning in build systems 
+    + https://stackoverflow.com/questions/33821137/build-versioning-in-continuous-delivery
+    + https://vsupalov.com/docker-latest-tag/
++ Issues with multiline yml script syntax 
+  + Solution https://stackoverflow.com/questions/51062370/how-can-i-add-multi-line-bash-eod-command-to-gitlab-ci-yml
+  + Detailed explanation of the syntax https://stackoverflow.com/questions/3790454/in-yaml-how-do-i-break-a-string-over-multiple-lines/21699210#21699210
 
 
 ### Other useful links that helped during set up 
@@ -56,6 +70,9 @@ docker push registry.gitlab.com/koleda/test-ci-cd/koledachris/php-fpm:2.0.0
   + https://stackoverflow.com/questions/40350456/docker-any-way-to-list-open-sockets-inside-a-running-docker-container
 + How ports work in general and in docker 
   + https://stackoverflow.com/questions/3329641/how-do-multiple-clients-connect-simultaneously-to-one-port-say-80-on-a-server
+
+
+
 
 ## Steps to setup the Server 
 ### To Build Project

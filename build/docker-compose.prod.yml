@@ -2,7 +2,7 @@ version: '3'
 
 services : 
   nginx:
-    image: registry.gitlab.com/koleda/test-ci-cd/nginx:1.0.0
+    image: registry.gitlab.com/koleda/test-ci-cd/nginx:latest
     volumes: 
       - ${APP_MOUNT}:/var/www/html
       # - ${LETSENCRYPT_MOUNT}:/etc/pki/tls/letsencrypt
@@ -16,7 +16,7 @@ services :
     restart: always
 
   php-fpm:
-    image: registry.gitlab.com/koleda/test-ci-cd/php-fpm:1.0.0
+    image: registry.gitlab.com/koleda/test-ci-cd/php-fpm:latest
     volumes: 
       - ${APP_MOUNT}:/var/www/html
     networks: 
@@ -24,7 +24,7 @@ services :
     restart: always
   
   queue-worker:
-    image: registry.gitlab.com/koleda/test-ci-cd/queue-worker:1.0.0
+    image: registry.gitlab.com/koleda/test-ci-cd/queue-worker:latest
     volumes: 
       - ${APP_MOUNT}:/var/www/html
     networks: 
@@ -34,7 +34,7 @@ services :
     restart: always
   
   mysql:
-    image: registry.gitlab.com/koleda/test-ci-cd/mysql:1.0.0
+    image: registry.gitlab.com/koleda/test-ci-cd/mysql:latest
     volumes:
       - mysql_data:/var/lib/mysql
     environment: 
@@ -58,7 +58,7 @@ services :
     restart: always
 
   node:
-    image: registry.gitlab.com/koleda/test-ci-cd/node:1.0.0
+    image: registry.gitlab.com/koleda/test-ci-cd/node:latest
     volumes: 
     - ${APP_MOUNT}:/var/www/html
     networks:
