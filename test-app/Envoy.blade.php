@@ -3,13 +3,13 @@
 @setup
     // $SERVER_IP - the ip address of the server passed in from gitlab ci file
     // $GITLAB_SECRET - access token passed in from gitlab ci file
+    // $APP_NAME - the name of the application directory itself passed in from gitlab ci file so like /srv/app/<app_name>
     $repository = 'git@gitlab.com:koleda/test-ci-cd.git';
     $releases_dir = '/srv/releases';
     $app_dir = '/srv/app';
-    $app_name={{ $APP_NAME }};
     $release = date('YmdHis');
     $new_release_dir = $releases_dir .'/'. $release;
-    $release_mount = $releases_dir . '/' . $release . '/' . $app_name;
+    $release_mount = $releases_dir . '/' . $release . '/' . $APP_NAME ;
 @endsetup
 
 @story('deploy')
@@ -56,7 +56,7 @@
 
 @task('move_env')
     echo "Moving .env file from build to app"
-    cp {{ $new_release_dir }}/build/php/.env {{ $new_release_dir }}/{{ $app_name}}/.env 
+    cp {{ $new_release_dir }}/build/php/.env {{ $new_release_dir }}/{{ $APP_NAME }}/.env 
 @endtask
 
 @task('update_symlinks')
@@ -79,7 +79,7 @@
     echo 'Building new containers'
     cd {{ $new_release_dir }}/build
 
-    export APP_MOUNT={{ $app_dir}}/{{ $app_name}}/
+    export APP_MOUNT={{ $app_dir}}/{{ $APP_NAME }}/
     docker-compose -f docker-compose.prod.yml down && \
     docker-compose -f docker-compose.prod.yml up -d 
 @endtask
@@ -92,7 +92,7 @@
 
 @task('update_permissions')
     echo "Updating app directory permissions" 
-    cd {{ $app_dir }}/{{ $app_name }}
+    cd {{ $app_dir }}/{{ $APP_NAME  }}
     sudo chown -R deployer:www-data storage/ 
     sudo chmod -R 2770 storage/
   

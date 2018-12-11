@@ -74,10 +74,11 @@ deploy_production:
     - mkdir -p ~/.ssh
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
-    - cd $APP_NAME/ && ~/.composer/vendor/bin/envoy run deploy --SERVER_IP=$SERVER_IP --GITLAB_SECRET=$GITLAB_SECRET --CI_REPOSITORY_URL=$CI_REPOSITORY_URL --APP_NAME=$APP_NAME
+
+    - cd $APP_NAME/ && ~/.composer/vendor/bin/envoy run deploy --SERVER_IP=$SERVER_IP --GITLAB_SECRET=$GITLAB_SECRET --APP_NAME=$APP_NAME
   environment:
     name: production
-    url: http:/$SERVER_IP
+    url: http://$SERVER_IP
   when: manual
   only:
     - master
