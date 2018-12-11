@@ -1,12 +1,12 @@
-@servers(['web' => "deployer@{$IP}"])
+@servers(['web' => "deployer@{$SERVER_IP}"])
 
 @setup
-    // $IP - the ip address of the server passed in from gitlab ci file
+    // $SERVER_IP - the ip address of the server passed in from gitlab ci file
     // $GITLAB_SECRET - access token passed in from gitlab ci file
     $repository = 'git@gitlab.com:koleda/test-ci-cd.git';
     $releases_dir = '/srv/releases';
     $app_dir = '/srv/app';
-    $app_name= 'test-app';
+    $app_name={{ $APP_NAME }};
     $release = date('YmdHis');
     $new_release_dir = $releases_dir .'/'. $release;
     $release_mount = $releases_dir . '/' . $release . '/' . $app_name;

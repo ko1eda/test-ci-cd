@@ -1,9 +1,12 @@
 variables:
+  APP_NAME: test-app/
+  SERVER_IP: 34.229.188.177
+  REGISTRY_BASE: registry.gitlab.com/${CI_PROJECT_PATH} # path to your docker registry
   MYSQL_ROOT_PASSWORD: root
   MYSQL_DATABASE: test_db
   MYSQL_USER: test_user
   MYSQL_PASSWORD: password
-  
+
 stages:
   - build
   - testing
@@ -30,29 +33,29 @@ build_containers:
     - apk add py-pip
     - pip install docker-compose
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
-    - cd build/
-    - docker-compose -f docker-compose.gitlab.yml build 
-    - docker-compose -f docker-compose.gitlab.yml push 
+    - docker-compose -f $CI_PROJECT_DIR/build/docker-compose.gitlab.yml build 
+    - docker-compose -f $CI_PROJECT_DIR/build/docker-compose.gitlab.yml push 
     - |
-      images=$(docker-compose -f docker-compose.gitlab.yml config | grep 'image:' | awk -F ':' '{ print $2 }' | grep 'registry')
+      images=$(docker-compose -f $CI_PROJECT_DIR/build/docker-compose.gitlab.yml config | grep 'image:' | awk -F ':' '{ print $2 }' | grep 'registry')
       for image in $images
         do 
           docker tag "${image}":1.0."${CI_PIPELINE_IID}" "${image}":latest
           docker push "${image}":latest
-        done 
+        done
+    - echo $CI_REPOSITORY_URL
 
 unit_testing:
   stage: testing
-  image: registry.gitlab.com/koleda/test-ci-cd/php-fpm:1.0.${CI_PIPELINE_IID}
+  image: ${REGISTRY_BASE}/php-fpm:1.0.${CI_PIPELINE_IID}
   before_script:
     - curl --location --output /usr/local/bin/phpunit https://phar.phpunit.de/phpunit.phar
     - chmod +x /usr/local/bin/phpunit
   services:
-    - name: registry.gitlab.com/koleda/test-ci-cd/mysql:1.0.${CI_PIPELINE_IID}
+    - name: ${REGISTRY_BASE}/mysql:1.0.${CI_PIPELINE_IID}
       alias: mysql
     - redis:5.0.0-alpine
   script:
-    - cd test-app/
+    - cd $APP_NAME/
     - cp .env.testing .env
     - composer install
     - php artisan key:generate
@@ -61,7 +64,7 @@ unit_testing:
 
 deploy_production:  
   stage: deployment
-  image: registry.gitlab.com/koleda/test-ci-cd/php-fpm:1.0.${CI_PIPELINE_IID}
+  image: ${REGISTRY_BASE}/php-fpm:1.0.${CI_PIPELINE_IID}
   before_script:
     - composer global require laravel/envoy
   script:
@@ -71,10 +74,10 @@ deploy_production:
     - mkdir -p ~/.ssh
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
-    - cd test-app/ && ~/.composer/vendor/bin/envoy run deploy --IP=3.80.236.114 --GITLAB_SECRET=$GITLAB_SECRET
+    - cd $APP_NAME/ && ~/.composer/vendor/bin/envoy run deploy --SERVER_IP=$SERVER_IP --GITLAB_SECRET=$GITLAB_SECRET --CI_REPOSITORY_URL=$CI_REPOSITORY_URL --APP_NAME=$APP_NAME
   environment:
     name: production
-    url: http:/3.80.236.114
+    url: http:/$SERVER_IP
   when: manual
   only:
     - master
